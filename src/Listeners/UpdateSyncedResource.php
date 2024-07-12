@@ -49,7 +49,7 @@ class UpdateSyncedResource extends QueueableListener
     {
         /** @var Model|SyncMaster $centralModel */
         $centralModel = $event->model->getCentralModelName()
-            ::where($event->model->getGlobalIdentifierKeyName(), $event->model->getGlobalIdentifierKey())
+            ::useWritePdo()->where($event->model->getGlobalIdentifierKeyName(), $event->model->getGlobalIdentifierKey())
             ->first();
 
         // We disable events for this call, to avoid triggering this event & listener again.
@@ -102,7 +102,7 @@ class UpdateSyncedResource extends QueueableListener
             }
 
             /** @var Model|null */
-            $localModel = $localModelClass::firstWhere($event->model->getGlobalIdentifierKeyName(), $event->model->getGlobalIdentifierKey());
+            $localModel = $localModelClass::useWritePdo()->firstWhere($event->model->getGlobalIdentifierKeyName(), $event->model->getGlobalIdentifierKey());
 
             // Also: We're syncing attributes, not columns, which is
             // why we're using Eloquent instead of direct DB queries.
